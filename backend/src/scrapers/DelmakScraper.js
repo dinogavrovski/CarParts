@@ -64,9 +64,9 @@ class DelmakScraper extends BaseScraper {
     const links = [];
     $('a[href*="/vozila/"]').each((_i, el) => {
       const href = $(el).attr('href') || '';
-      // Model URLs have exactly 4 path segments: /c/{id}/vozila/{brand}/{model}
+      // Model URLs have exactly 5 path segments: c/{id}/vozila/{brand}/{model}
       const segments = href.split('/').filter(Boolean);
-      if (segments.length === 4 && segments[2] === 'vozila') {
+      if (segments.length === 5 && segments[2] === 'vozila') {
         links.push(href);
       }
     });
@@ -81,8 +81,8 @@ class DelmakScraper extends BaseScraper {
     $('a[href*="/vozila/"]').each((_i, el) => {
       const href = $(el).attr('href') || '';
       const segments = href.split('/').filter(Boolean);
-      // Sub-model URLs have 5+ path segments
-      if (segments.length >= 5 && segments[2] === 'vozila') {
+      // Sub-model URLs have 6+ path segments
+      if (segments.length >= 6 && segments[2] === 'vozila') {
         links.push(href);
       }
     });
