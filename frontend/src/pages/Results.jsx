@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import ListingCard from '../components/ListingCard'
+import CompareDrawer from '../components/CompareDrawer'
 import { cleanModelName } from '../utils/brandLogos'
 
 export default function Results() {
@@ -13,6 +14,7 @@ export default function Results() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [activeCategory, setActiveCategory] = useState('All')
+  const [compareId, setCompareId] = useState(null)
 
   useEffect(() => {
     if (!brand || !model) return
@@ -126,9 +128,13 @@ export default function Results() {
       {!loading && listings.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {listings.map(listing => (
-            <ListingCard key={listing.id} listing={listing} />
+            <ListingCard key={listing.id} listing={listing} onCompare={setCompareId} />
           ))}
         </div>
+      )}
+
+      {compareId && (
+        <CompareDrawer listingId={compareId} onClose={() => setCompareId(null)} />
       )}
 
       <div className="mt-10">

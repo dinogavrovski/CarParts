@@ -1,4 +1,4 @@
-export default function ListingCard({ listing }) {
+export default function ListingCard({ listing, onCompare }) {
   const { title, price, currency, availability, productUrl, store, imageUrl } = listing
 
   const inStock = availability?.toLowerCase().includes('залиха') ||
@@ -38,14 +38,25 @@ export default function ListingCard({ listing }) {
           </span>
         </div>
 
-        <a
-          href={productUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-1 w-full text-center rounded-lg bg-[#111111] px-4 py-2.5 text-xs font-bold text-white uppercase tracking-widest hover:bg-orange-500 transition-colors"
-        >
-          Visit Store
-        </a>
+        <div className="flex gap-2 mt-1">
+          <a
+            href={productUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 text-center rounded-lg bg-[#111111] px-4 py-2.5 text-xs font-bold text-white uppercase tracking-widest hover:bg-orange-500 transition-colors"
+          >
+            Visit Store
+          </a>
+          <button
+            onClick={() => onCompare(listing.id)}
+            className="px-3 py-2.5 rounded-lg border border-gray-200 bg-white text-xs font-bold text-gray-500 uppercase tracking-widest hover:border-orange-500 hover:text-orange-500 transition-colors"
+            title="Compare prices"
+          >
+            <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   )

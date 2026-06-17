@@ -5,6 +5,7 @@ const brandsRouter = require('./routes/brands');
 const modelsRouter = require('./routes/models');
 const categoriesRouter = require('./routes/categories');
 const searchRouter = require('./routes/search');
+const similarRouter = require('./routes/similar');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -16,6 +17,7 @@ app.use('/api/brands', brandsRouter);
 app.use('/api/models', modelsRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/search', searchRouter);
+app.use('/api/similar', similarRouter);
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 
