@@ -57,6 +57,7 @@ async function upsertListing(data) {
       title: data.title,
       price: data.price,
       availability: data.availability,
+      imageUrl: data.imageUrl,
     },
     create: data,
   });
@@ -92,6 +93,7 @@ async function run() {
           currency: listing.currency,
           availability: listing.availability,
           productUrl: listing.productUrl,
+          imageUrl: listing.imageUrl || null,
           storeId: store.id,
           vehicleId: dbVehicle.id,
           categoryId: dbCategory.id,

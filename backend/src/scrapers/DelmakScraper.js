@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const BaseScraper = require('./BaseScraper');
 
 const BASE = 'https://delmak.mk';
-const DELAY_MS = 800;
+const DELAY_MS = 400;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -117,7 +117,11 @@ class DelmakScraper extends BaseScraper {
       const availText = card.find('p.pc__item_number').first().text().trim();
       const availability = availText || 'Непознато';
 
-      products.push({ title, price, currency: 'MKD', availability, productUrl });
+      // Image: pc__img inside the sibling pc__img-wrapper
+      const imgEl = card.parent().find('img.pc__img').first();
+      const imageUrl = imgEl.attr('src') || null;
+
+      products.push({ title, price, currency: 'MKD', availability, productUrl, imageUrl });
     });
 
     return products;

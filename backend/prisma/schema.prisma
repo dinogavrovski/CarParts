@@ -37,6 +37,7 @@ model Listing {
   currency     String       @default("MKD")
   availability String
   productUrl   String       @unique
+  imageUrl     String?
   lastUpdated  DateTime     @updatedAt
 
   store        Store        @relation(fields: [storeId], references: [id])

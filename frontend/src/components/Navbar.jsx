@@ -8,8 +8,8 @@ export default function Navbar() {
       to={to}
       className={`text-sm font-medium transition-colors ${
         pathname === to
-          ? 'text-blue-600'
-          : 'text-gray-500 hover:text-gray-900'
+          ? 'text-orange-500'
+          : 'text-gray-400 hover:text-white'
       }`}
     >
       {label}
@@ -17,12 +17,12 @@ export default function Navbar() {
   )
 
   return (
-    <header className="bg-white border-b border-gray-200">
-      <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link to="/" className="font-semibold text-gray-900 text-base tracking-tight">
-          CarParts <span className="text-blue-600">MK</span>
+    <header className="bg-[#111111]">
+      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <Link to="/" className="text-white font-bold text-lg tracking-widest uppercase">
+          Car<span className="text-orange-500">Parts</span> MK
         </Link>
-        <nav className="flex gap-6">
+        <nav className="flex gap-8">
           {link('/', 'Search')}
           {link('/about', 'About')}
         </nav>

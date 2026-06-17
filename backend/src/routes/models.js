@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 router.get('/:brand', async (req, res) => {
   try {
     const vehicles = await prisma.vehicle.findMany({
-      where: { brand: { equals: req.params.brand, mode: 'insensitive' } },
+      where: { brand: req.params.brand },
       select: { model: true },
       orderBy: { model: 'asc' },
     });
