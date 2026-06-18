@@ -16,11 +16,13 @@ export default function Navbar() {
     </Link>
   )
 
+  const isHome = pathname === '/'
+
   return (
-    <header className="bg-[#111111]">
+    <header className={`${isHome ? 'absolute top-0 left-0 right-0 z-20 bg-black/10 backdrop-blur-sm' : 'bg-[#111111]'}`}>
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link to="/" className="text-white font-bold text-lg tracking-widest uppercase">
-          Car<span className="text-orange-500">Parts</span> MK
+        <Link to="/">
+          <img src={isHome ? '/logo.png' : '/logoblack.png'} alt="CarParts MK" className="h-16 w-auto object-contain" />
         </Link>
         <nav className="flex gap-8">
           {link('/', 'Search')}

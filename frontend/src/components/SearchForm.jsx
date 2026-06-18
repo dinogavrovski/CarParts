@@ -20,7 +20,7 @@ function BrandSelect({ brands, value, onChange }) {
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-2 rounded-lg border border-gray-200 bg-[#f5f5f5] px-4 py-3 text-sm text-left focus:outline-none focus:ring-2 focus:ring-orange-500"
       >
-        {logo && <img src={logo} alt="" className="w-5 h-5 object-contain shrink-0" />}
+        {logo && <img src={logo} alt="" className="w-7 h-7 object-contain shrink-0" />}
         <span className={value ? 'text-[#111111]' : 'text-gray-400'}>{value || 'Select brand'}</span>
         <svg className="ml-auto w-4 h-4 text-gray-400 shrink-0" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
@@ -38,8 +38,8 @@ function BrandSelect({ brands, value, onChange }) {
                   className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-orange-50 text-left transition-colors ${value === b ? 'bg-orange-50 text-orange-600 font-semibold' : 'text-[#111111]'}`}
                 >
                   {bLogo
-                    ? <img src={bLogo} alt="" className="w-5 h-5 object-contain shrink-0" onError={e => e.target.style.display='none'} />
-                    : <span className="w-5 h-5 shrink-0" />}
+                    ? <img src={bLogo} alt="" className="w-10 h-10 object-contain shrink-0" onError={e => e.target.style.display='none'} />
+                    : <span className="w-10 h-10 shrink-0" />}
                   {b}
                 </button>
               </li>
@@ -66,18 +66,16 @@ export default function SearchForm() {
     rawModels.map(m => splitModelYear(brand, m).base)
   )].sort()
 
-  // Derived: year variants for selected base model
-  const yearVariants = rawModels
-    .map(m => splitModelYear(brand, m))
-    .filter(m => m.base === baseModel && m.year !== null)
-    .sort((a, b) => a.year.localeCompare(b.year))
+  // Derived: unique year variants for selected base model (deduplicated across stores)
+  const yearVariants = [...new Map(
+    rawModels
+      .map(m => splitModelYear(brand, m))
+      .filter(m => m.base === baseModel && m.year !== null)
+      .map(m => [m.year, m])
+  ).values()].sort((a, b) => a.year.localeCompare(b.year))
 
-  // The full model name to send to the API (rawModel that matches base+year)
-  const selectedFullModel = rawModels.find(m => {
-    const s = splitModelYear(brand, m)
-    if (year) return s.base === baseModel && s.year === year
-    return s.base === baseModel && s.year === null
-  }) || ''
+  // Normalized model string to send to the API — backend does fuzzy matching
+  const selectedFullModel = year ? `${baseModel} ${year}` : baseModel
 
   useEffect(() => {
     fetch('/api/brands').then(r => r.json()).then(setBrands)
@@ -102,7 +100,15 @@ export default function SearchForm() {
     navigate(`/results?brand=${encodeURIComponent(brand)}&model=${encodeURIComponent(selectedFullModel)}`)
   }
 
-  const selectClass = "w-full rounded-lg border border-gray-200 bg-[#f5f5f5] px-4 py-3 text-sm text-[#111111] focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent disabled:opacity-40 disabled:cursor-not-allowed"
+  const selectClass = "w-full rounded-lg border border-gray-200 bg-[#f5f5f5] px-4 py-3 pr-10 text-sm text-[#111111] focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent disabled:opacity-40 disabled:cursor-not-allowed appearance-none"
+
+  const SelectArrow = () => (
+    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+      <svg className="w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+      </svg>
+    </div>
+  )
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -115,19 +121,25 @@ export default function SearchForm() {
       {/* Model */}
       <div>
         <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-widest">Model</label>
-        <select className={selectClass} value={baseModel} onChange={e => setBaseModel(e.target.value)} disabled={!brand}>
-          <option value="">{brand ? 'Select model' : 'Select a brand first'}</option>
-          {baseModels.map(m => <option key={m} value={m}>{m}</option>)}
-        </select>
+        <div className="relative">
+          <select className={selectClass} value={baseModel} onChange={e => setBaseModel(e.target.value)} disabled={!brand}>
+            <option value="">{brand ? 'Select model' : 'Select a brand first'}</option>
+            {baseModels.map(m => <option key={m} value={m}>{m}</option>)}
+          </select>
+          <SelectArrow />
+        </div>
       </div>
 
       {/* Year */}
       <div>
         <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-widest">Year</label>
-        <select className={selectClass} value={year} onChange={e => setYear(e.target.value)} disabled={!baseModel}>
-          <option value="">{!baseModel ? 'Select a model first' : yearVariants.length === 0 ? 'All years' : 'Select year range'}</option>
-          {yearVariants.map(v => <option key={v.year} value={v.year}>{v.year}</option>)}
-        </select>
+        <div className="relative">
+          <select className={selectClass} value={year} onChange={e => setYear(e.target.value)} disabled={!baseModel}>
+            <option value="">{!baseModel ? 'Select a model first' : yearVariants.length === 0 ? 'All years' : 'Select year range'}</option>
+            {yearVariants.map(v => <option key={v.year} value={v.year}>{v.year}</option>)}
+          </select>
+          <SelectArrow />
+        </div>
       </div>
 
       <button

@@ -94,11 +94,21 @@ export function cleanModelName(brand, model) {
 }
 
 // Split a cleaned model name into { base, year }
-// e.g. "FOCUS 98-04" → { base: "FOCUS", year: "98-04" }
-// e.g. "FOCUS"       → { base: "FOCUS", year: null }
+// Handles: "FOCUS 98-04", "FOCUS 04 08", "FOCUS 08-", "FOCUS 08"
 export function splitModelYear(brand, rawModel) {
   const cleaned = cleanModelName(brand, rawModel)
-  const match = cleaned.match(/^(.+?)\s+(\d{2}-\d{2}|\d{2}-)$/)
-  if (match) return { base: match[1], year: match[2], full: rawModel }
+
+  // Format 1: "FOCUS 98-04" or "FOCUS 08-"
+  const dashMatch = cleaned.match(/^(.+?)\s+(\d{2}-\d{2}|\d{2}-)$/)
+  if (dashMatch) return { base: dashMatch[1], year: dashMatch[2], full: rawModel }
+
+  // Format 2: "FOCUS 04 08" (two space-separated 2-digit years at the end)
+  const spaceMatch = cleaned.match(/^(.+?)\s+(\d{2})\s+(\d{2})$/)
+  if (spaceMatch) return { base: spaceMatch[1], year: `${spaceMatch[2]}-${spaceMatch[3]}`, full: rawModel }
+
+  // Format 3: "FOCUS 08" (single trailing year = open-ended)
+  const singleMatch = cleaned.match(/^(.+?)\s+(\d{2})$/)
+  if (singleMatch) return { base: singleMatch[1], year: `${singleMatch[2]}-`, full: rawModel }
+
   return { base: cleaned, year: null, full: rawModel }
 }
