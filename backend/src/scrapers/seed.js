@@ -52,7 +52,7 @@ async function upsertCategory(name) {
 }
 
 async function upsertListing(data) {
-  return prisma.listing.upsert({
+  const listing = await prisma.listing.upsert({
     where: { productUrl: data.productUrl },
     update: {
       title: data.title,
@@ -62,6 +62,11 @@ async function upsertListing(data) {
     },
     create: data,
   });
+  // Record price snapshot for history tracking
+  await prisma.priceHistory.create({
+    data: { listingId: listing.id, price: data.price },
+  });
+  return listing;
 }
 
 async function processVehicle(scraper, store, vehicle, counter) {

@@ -6,6 +6,8 @@ const modelsRouter = require('./routes/models');
 const categoriesRouter = require('./routes/categories');
 const searchRouter = require('./routes/search');
 const similarRouter = require('./routes/similar');
+const priceHistoryRouter = require('./routes/priceHistory');
+const alertsRouter = require('./routes/alerts');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -18,6 +20,8 @@ app.use('/api/models', modelsRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/similar', similarRouter);
+app.use('/api/price-history', priceHistoryRouter);
+app.use('/api/alerts', alertsRouter);
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 
